@@ -1,0 +1,31 @@
+/* colors for UV 
+0 to 2 ---- Green  "Low"
+3 to 5 ---- Yellow	"Moderate"
+6 to 7 ----	Orange	"High"
+8 to 10 ----Red	"Very high"
+11+ ----Violet	"Extreme" */
+
+ion-icon {
+    color: white;
+    --ionicon-stroke-width : 80px;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.red {
+    background-color: red;
+}
+
+.violet {
+    background-color: violet;
+}
