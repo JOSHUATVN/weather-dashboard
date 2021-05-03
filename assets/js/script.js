@@ -135,11 +135,11 @@ function getWeatherResponse () {
                     fiveDay.attr("class", "col-3 m-2 bg-primary")
                     let c = new Date(0);
                     c.setUTCSeconds(readDate);
-                    let date = c;
-                    console.log(date);
-                    let month = date.getMonth() + 1;
-                    let day = date.getDate();
-                    let year = date.getFullYear() + '/' + (month < 10 ? '0' : ' ') + month + '/' + (day < 10 ? '0' : ' ') + day;
+                    let date1 = c;
+                    console.log(date1);
+                    let month = date1.getMonth() + 1;
+                    let day = date1.getDate();
+                    let year = date1.getFullYear() + '/' + (month < 10 ? '0' : ' ') + month + '/' + (day < 10 ? '0' : ' ') + day;
                     let fiveDayText = $("<h6>").text(year);
 
                     let img = $("<img>");
