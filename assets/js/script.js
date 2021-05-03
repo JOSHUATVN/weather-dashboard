@@ -1,7 +1,9 @@
-let key = "e41489916c332111126c216d64f6a5f9";
+let APIkey = "b0499bde02e99be17b0f2032e6691304";
 let cityLists = $("#list-city");
 let city = [];
 
+
+init()
 
 //initiate function
 function init() {
@@ -43,20 +45,17 @@ function savedCities () {
     console.log(localStorage);
 };
 
-
-// APIs response function
+//1st API get current weather for user city
 function getWeatherResponse () {
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" = city = "&appid=" + key;
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" = city = "&appid=" + APIkey;
 
-
-    // 1st API todays weather
     $("#todays-weather").empty();
     $.ajax({
         url: weatherURL,
         method : "GET"
     }).then(function(respose) {
 
-        cityName = $("<h3>").text(respose.name + " " + FormetDay());
+        cityName = $("<h3>").text(respose.name + " " + FormatDay());
         $("#todays-weather").append(cityName);
         let tempToNum = parseInt((response.main.temp) * 9/5-459);
         let cityTemp = $("<p>").text("Temperature: " + tempToNum + "  °F");
@@ -68,44 +67,86 @@ function getWeatherResponse () {
         let coordinateLon = response.coord.lon;
         let coordinateLat = response.coord.lan;
 
-        // 2nd API UV index colors
-        let weatherURL2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + key + "&lat=" + coordinateLat + "&lon=" + coordinateLon;
-        $(ajax({
+
+        //2nd API long and lat
+        let weatherURL2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + APIkey + "&lat=" + coordinateLat + "&lon=" + coordinateLon;
+        $.ajax({
             url: weatherURL2,
             meathod: "GET"
         }).then(function(responseuv) {
-            let cityUV = $("<span>").text(responseuv.value);
-            let cityUVp = $("<p>").text("UV Index: ");
-            cityUVp.append(cityUV);
-            $("#today-weather").append(cityUVp);
+            let cityUVs = $("<span>").text(responseuv.value);
+            let cityUVc = $("<p>").text("UV Index:  ");
+            cityUVc.append(cityUVs);
+            $("#todays-weather").append(cityUVc);
             console.log(typeof responseuv.value);
-            if(responseuv.value > 0 && responseuv.value <=2){
-                cityUV.attr("class","green")
-            }
-            else if (responseuv.value > 2 && responseuv.value <= 5){
-                cityUV.attr("class","yellow")
-            }
-            else if (responseuv.value > 5 && responseuv.value <= 7){
-                cityUV.attr("class","orange")
-            }
-            else if (responseuv.value > 7 && responseuv.value <= 10){
-                cityUV.attr("class","red")
-            }
-            else{
-                cityUV.attr("class","violet")
+            
+            if (responseuv.value > 0 && responseuv.value <=2) {
+                cityUVs.attr("class", "green")
+            } else if ( responseuv.value > 2 && responseuv.value <=5) {
+                cityUVs.attr("class", "yellow")
+            } else if (responseuv.value > 5 && responseuv.value <=7) {
+                cityUVs.attr("class", "orange")
+            } else if (responseuv.value > 7 && responseuv.value <=10) {
+                cityUVs.attr("class", "red")
+            } else {
+                cityUVs.attr("class", " violet")
             }
         });
 
-        //3rd API 5-day forecast
-        
+        // 3rd API 5-Day forecast
+        let weatherURL3 = "https://api.openweathermap.org/data/2.5/forecast?q=" +cityName + "appid=" + APIkey;
+        $.ajax({
+            url: weatherURL3,
+            method: "GET"
+        }).then(function(response5day) {
+            $("#weather-box").empty();
+            console.log(response5day);
+            for (let i = 0, u = 0; u <= 5; i = i + 6) {
+                let readDate = response5day.list[i].dt;
+                if (response5day.list[i].dt != response5day.list [i+1].dt) {
+                    let fiveDay = $("<div>");
+                    fiveDay.attr("class", "col-3 m-2 bg-primary")
+                    let c = new Date(0);
+                    c.setUTCSeconds(readDate);
+                    let date = c;
+                    console.log(date);
+                    let month = date.getMonth() + 1;
+                    let day = date.getDate();
+                    let year = date.getFullYear() + '/' + (month < 10 ? '0' : ' ') + month + '/' + (day < 10 ? '0' : ' ') + day;
+                    let fiveDayText = $("<h6>").text(year);
+
+                    let img = $("<img>");
+                    let skyStat = response5day.list[i].weather[0].main;
+                    if (skyStat === "Clouds") {
+                        img.attr("src", "https://img.icons8.com/color/48/000000/cloud.png")
+                    } else if (skyStat === "Clear") {
+                        img.attr("src", "https://img.icons8.com/color/48/000000/summer.png")
+                    } else if (skyStat === "Rain") {
+                        img.attr("src", "https://img.icons8.com/color/48/000000/rain.png")
+                    }
+
+                    let getTemp = response5day.list[i].main.temp;
+                    console.log(skyStat);
+                    let tempToNum = parseInt((getTemp) * 9/5 - 459);
+                    let getTemp = $("<p>").text("Temperature: " + tempToNum + " °F");
+                    let getHumid = $("<p>").text("Humidity: " + response5day.list[i].main.humidity + " %");
+                    fiveDay.append(fiveDayText);
+                    fiveDay.append(img);
+                    fiveDay.append(getTemp);
+                    fiveDay.append(getHumid);
+                    $("#weather-box").append(fiveDay);
+                    console.log(response5day);
+                    u++;
+                }
+            }
+        })
+    })
+}
 
 
 
 
-
-
-
-// click for li in ul
+// click for li 
 $(document).on("click", "", function () {
   let currentCity = $(this).attr("data-city");
   getWeatherResponse(currentCity);
