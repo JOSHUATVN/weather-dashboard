@@ -3,6 +3,19 @@ let cityLists = $("#list-city");
 let city = [];
 
 
+
+function formatDay(date) {
+    let date = new Date();
+    console.log(date);
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+
+    let year = date.getFullYear() + '/' + (month < 10 ? '0' : '') + month + '/' + (day < 10 ? '0' : '') + day;
+    return year;
+}
+
+
+
 init()
 
 //initiate function
@@ -12,10 +25,26 @@ function init() {
   if (savedCities !== null) {
     city = savedCities;
   }
-
   getCities()
 }
 
+// when user submits
+$("#add-city").on("click", function(e){
+    e.preventDefualt();
+
+    // taking line from input
+    let city = $("#city-input").val().trim();
+
+    // if blank return to start of submission
+    if (city === "") {
+        return;
+    }
+    // putting cities into array
+    city.push(cities);
+    // storing users citys in localstorage
+    savedCities();
+    getCities();
+});
 
 // geting cities function
 function getCities () {
@@ -29,9 +58,7 @@ function getCities () {
         li.atrr("class", "list-group-item");
         console.log(li);
         cityLists.prepend(li);
-    }
-
-    if (cities) {
+    } if (!cities) {
         return
     } else {
         getWeatherResponse(cities)
@@ -47,7 +74,7 @@ function savedCities () {
 
 //1st API get current weather for user city
 function getWeatherResponse () {
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" = city = "&appid=" + APIkey;
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=" + APIkey;
 
     $("#todays-weather").empty();
     $.ajax({
@@ -69,7 +96,7 @@ function getWeatherResponse () {
 
 
         //2nd API long and lat
-        let weatherURL2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + APIkey + "&lat=" + coordinateLat + "&lon=" + coordinateLon;
+        let weatherURL2 = "https://api.openweathermap.org/data/2.5/uvi?appid=" + APIkey + "&lat=" + coordinateLat + "&lon=" + coordinateLon;
         $.ajax({
             url: weatherURL2,
             meathod: "GET"
@@ -124,15 +151,15 @@ function getWeatherResponse () {
                     } else if (skyStat === "Rain") {
                         img.attr("src", "https://img.icons8.com/color/48/000000/rain.png")
                     }
-
+                    
                     let getTemp = response5day.list[i].main.temp;
                     console.log(skyStat);
                     let tempToNum = parseInt((getTemp) * 9/5 - 459);
-                    let getTemp = $("<p>").text("Temperature: " + tempToNum + " °F");
+                    let getTempK = $("<p>").text("Temperature: " + tempToNum + " °F");
                     let getHumid = $("<p>").text("Humidity: " + response5day.list[i].main.humidity + " %");
                     fiveDay.append(fiveDayText);
                     fiveDay.append(img);
-                    fiveDay.append(getTemp);
+                    fiveDay.append(getTempK);
                     fiveDay.append(getHumid);
                     $("#weather-box").append(fiveDay);
                     console.log(response5day);
